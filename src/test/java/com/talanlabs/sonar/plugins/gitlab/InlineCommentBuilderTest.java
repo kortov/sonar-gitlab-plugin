@@ -57,7 +57,7 @@ public class InlineCommentBuilderTest {
 
     @Test
     public void testNoIssues() {
-        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, 1, Collections.emptyList(), new MarkDownUtils()).buildForMarkdown()).isEqualTo("");
+        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, null, 1, Collections.emptyList(), new MarkDownUtils()).buildForMarkdown()).isEqualTo("");
     }
 
     @Test
@@ -67,7 +67,7 @@ public class InlineCommentBuilderTest {
         ReportIssue r1 = ReportIssue.newBuilder().issue(Utils.newIssue("component", null, 1, Severity.INFO, true, "Issue", "rule")).revision(null).url("lalal").file("file")
                 .ruleLink("http://myserver/coding_rules#rule_key=repo%3Arule").reportedOnDiff(true).build();
 
-        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, 1, Collections.singletonList(r1), new MarkDownUtils()).buildForMarkdown())
+        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, null, 1, Collections.singletonList(r1), new MarkDownUtils()).buildForMarkdown())
                 .isEqualTo(":information_source: Issue [:blue_book:](http://myserver/coding_rules#rule_key=repo%3Arule)");
     }
 
@@ -79,7 +79,7 @@ public class InlineCommentBuilderTest {
         ReportIssue r1 = ReportIssue.newBuilder().issue(Utils.newIssue("component", null, 1, Severity.INFO, true, "Issue", "rule")).revision(null).url("lalal").file("file")
                 .ruleLink("http://myserver/coding_rules#rule_key=repo%3Arule").reportedOnDiff(true).build();
 
-        Assertions.assertThat(new InlineCommentBuilder(config, "123", "john", 1, Collections.singletonList(r1), new MarkDownUtils()).buildForMarkdown())
+        Assertions.assertThat(new InlineCommentBuilder(config, "123", "john", null, 1, Collections.singletonList(r1), new MarkDownUtils()).buildForMarkdown())
                 .isEqualTo(":information_source: Issue [:blue_book:](http://myserver/coding_rules#rule_key=repo%3Arule) @john");
     }
 
@@ -91,7 +91,7 @@ public class InlineCommentBuilderTest {
                 .map(i -> ReportIssue.newBuilder().issue(Utils.newIssue("component", null, 1, Severity.INFO, true, "Issue", "rule")).revision(null).url("lalal").file("file")
                         .ruleLink("http://myserver/coding_rules#rule_key=repo%3Arule").reportedOnDiff(true).build()).collect(Collectors.toList());
 
-        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, 1, ris, new MarkDownUtils()).buildForMarkdown()).isEqualTo(
+        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, null, 1, ris, new MarkDownUtils()).buildForMarkdown()).isEqualTo(
                 "* :information_source: Issue [:blue_book:](http://myserver/coding_rules#rule_key=repo%3Arule)\n"
                         + "* :information_source: Issue [:blue_book:](http://myserver/coding_rules#rule_key=repo%3Arule)\n"
                         + "* :information_source: Issue [:blue_book:](http://myserver/coding_rules#rule_key=repo%3Arule)\n"
@@ -114,7 +114,7 @@ public class InlineCommentBuilderTest {
                 + "${maxGlobalIssues}\n${maxBlockerIssuesGate}\n${maxCriticalIssuesGate}\n${maxMajorIssuesGate}\n${maxMinorIssuesGate}\n${maxInfoIssuesGate}\n"
                 + "${disableIssuesInline?c}\n${onlyIssueFromCommitFile?c}\n${commentNoIssue?c}\n${revision}\n${lineNumber}");
 
-        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, 1, Collections.emptyList(), new MarkDownUtils()).buildForMarkdown())
+        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, null, 1, Collections.emptyList(), new MarkDownUtils()).buildForMarkdown())
                 .isEqualTo("123\n" + "123456789\n" + "master\n" + "https://gitlab.com\n" + "10\n" + "0\n" + "0\n" + "-1\n" + "-1\n" + "-1\n" + "false\n" + "false\n" + "false\n" + "123\n" + "1");
     }
 
@@ -126,7 +126,7 @@ public class InlineCommentBuilderTest {
                 .map(i -> ReportIssue.newBuilder().issue(Utils.newIssue("component", null, null, Severity.MAJOR, true, "Issue number:" + i, "rule" + i)).revision(null).url("lalal").file("file")
                         .ruleLink("http://myserver/coding_rules#rule_key=repo%3Arule").reportedOnDiff(true).build()).collect(Collectors.toList());
 
-        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, 1, ris, new MarkDownUtils()).buildForMarkdown()).isEqualTo(
+        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, null, 1, ris, new MarkDownUtils()).buildForMarkdown()).isEqualTo(
                 "17\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n"
                         + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n");
     }
@@ -140,7 +140,7 @@ public class InlineCommentBuilderTest {
                 .map(i -> ReportIssue.newBuilder().issue(Utils.newIssue("component", null, null, i % 2 == 0 ? Severity.MAJOR : Severity.BLOCKER, true, "Issue number:" + i, "rule" + i)).revision(null)
                         .url("lalal").file("file").ruleLink("http://myserver/coding_rules#rule_key=repo%3Arule").reportedOnDiff(true).build()).collect(Collectors.toList());
 
-        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, 1, ris, new MarkDownUtils()).buildForMarkdown()).isEqualTo(
+        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, null, 1, ris, new MarkDownUtils()).buildForMarkdown()).isEqualTo(
                 "9\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "9\n" + "component\n"
                         + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n");
     }
@@ -154,7 +154,7 @@ public class InlineCommentBuilderTest {
                 .map(i -> ReportIssue.newBuilder().issue(Utils.newIssue("component", null, null, Severity.MAJOR, true, "Issue number:" + i, "rule" + i)).revision("123").url("url").file("file")
                         .ruleLink("ruleLink").reportedOnDiff(false).build()).collect(Collectors.toList());
 
-        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, 1, ris, new MarkDownUtils()).buildForMarkdown()).isEqualTo(
+        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, null, 1, ris, new MarkDownUtils()).buildForMarkdown()).isEqualTo(
                 "0\n" + "17\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n"
                         + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n");
     }
@@ -168,7 +168,7 @@ public class InlineCommentBuilderTest {
                 .map(i -> ReportIssue.newBuilder().issue(Utils.newIssue("component", null, null, i % 2 == 0 ? Severity.MAJOR : Severity.BLOCKER, true, "Issue number:" + i, "rule" + i)).revision("123")
                         .url("url").file("file").ruleLink("ruleLink").reportedOnDiff(false).build()).collect(Collectors.toList());
 
-        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, 1, ris, new MarkDownUtils()).buildForMarkdown()).isEqualTo(
+        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, null, 1, ris, new MarkDownUtils()).buildForMarkdown()).isEqualTo(
                 "0\n" + "10\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n" + "component\n");
     }
 
@@ -182,7 +182,7 @@ public class InlineCommentBuilderTest {
                         .url(GITLAB_URL + "/File.java#L" + i).file("file").ruleLink("http://myserver/coding_rules#rule_key=repo%3Arule" + i).reportedOnDiff(false).build())
                 .collect(Collectors.toList());
 
-        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, 1, ris, new MarkDownUtils()).buildForMarkdown()).isEqualTo(
+        Assertions.assertThat(new InlineCommentBuilder(config, "123", null, null, 1, ris, new MarkDownUtils()).buildForMarkdown()).isEqualTo(
                 ":no_entry:\n" + "![BLOCKER](https://github.com/gabrie-allaigre/sonar-gitlab-plugin/raw/master/images/severity-blocker.png)\n"
                         + "http://myserver/coding_rules#rule_key=repo%253Arule0\n"
                         + ":warning: [Issue number:0](https://gitlab.com/test/test/File.java#L0) [:blue_book:](http://myserver/coding_rules#rule_key=repo%3Arule0)\n"
@@ -201,7 +201,7 @@ public class InlineCommentBuilderTest {
     public void testTemplateIssueFail() {
         settings.setProperty(GitLabPlugin.GITLAB_INLINE_TEMPLATE, "<#toto>");
 
-        Assertions.assertThatThrownBy(() -> new InlineCommentBuilder(config, "123", null, 1, Collections.emptyList(), new MarkDownUtils()).buildForMarkdown())
+        Assertions.assertThatThrownBy(() -> new InlineCommentBuilder(config, "123", null, null, 1, Collections.emptyList(), new MarkDownUtils()).buildForMarkdown())
                 .isInstanceOf(MessageException.class);
     }
 }

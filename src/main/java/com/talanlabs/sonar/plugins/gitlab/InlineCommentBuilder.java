@@ -30,9 +30,9 @@ public class InlineCommentBuilder extends AbstractCommentBuilder {
     private final Integer lineNumber;
     private final String author;
 
-    public InlineCommentBuilder(GitLabPluginConfiguration gitLabPluginConfiguration, String revision, String author, Integer lineNumber, List<ReportIssue> reportIssues,
+    public InlineCommentBuilder(GitLabPluginConfiguration gitLabPluginConfiguration, String revision, String author, String projectKey, Integer lineNumber, List<ReportIssue> reportIssues,
                                 MarkDownUtils markDownUtils) {
-        super(gitLabPluginConfiguration, revision, reportIssues, markDownUtils, "inline", gitLabPluginConfiguration.inlineTemplate());
+        super(gitLabPluginConfiguration, revision, reportIssues, markDownUtils, "inline", gitLabPluginConfiguration.inlineTemplate(), projectKey);
 
         this.lineNumber = lineNumber;
         this.author = author;
