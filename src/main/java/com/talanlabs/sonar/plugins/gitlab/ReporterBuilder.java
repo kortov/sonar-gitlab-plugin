@@ -181,7 +181,8 @@ public class ReporterBuilder {
     }
 
     private void updateReviewCommentsPerInline(String revision, String username, File file, Integer lineNumber, List<ReportIssue> reportIssues) {
-        String body = new InlineCommentBuilder(gitLabPluginConfiguration, revision, username, lineNumber, reportIssues, markDownUtils).buildForMarkdown();
+        String dashboardUrl = sonarFacade.getDashboardUrl();
+        String body = new InlineCommentBuilder(gitLabPluginConfiguration, revision, username, lineNumber, reportIssues, markDownUtils, dashboardUrl).buildForMarkdown();
         if (body != null && !body.trim().isEmpty()) {
             boolean exists = commitFacade.hasSameCommitCommentsForFile(revision, file, lineNumber, body);
             if (!exists) {
@@ -192,7 +193,8 @@ public class ReporterBuilder {
 
     private void updateGlobalComments(QualityGate qualityGate, Reporter report) {
         String username = commitFacade.getUsernameForRevision(gitLabPluginConfiguration.commitSHA().get(0));
-        String body = new GlobalCommentBuilder(gitLabPluginConfiguration, username, qualityGate, report, markDownUtils).buildForMarkdown();
+        String dashboardUrl = sonarFacade.getDashboardUrl();
+        String body = new GlobalCommentBuilder(gitLabPluginConfiguration, username, qualityGate, report, markDownUtils, dashboardUrl).buildForMarkdown();
         if (body != null && !body.trim().isEmpty()) {
             commitFacade.addGlobalComment(body);
         }

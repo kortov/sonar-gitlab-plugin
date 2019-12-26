@@ -54,9 +54,10 @@ public abstract class AbstractCommentBuilder {
     protected final MarkDownUtils markDownUtils;
     private final String templateName;
     private final String template;
+    private final String dashboardUrl;
 
     AbstractCommentBuilder(GitLabPluginConfiguration gitLabPluginConfiguration, String revision, List<ReportIssue> reportIssues, MarkDownUtils markDownUtils,
-                           String templateName, String template) {
+                           String templateName, String template, String dashboardUrl) {
         super();
 
         this.gitLabPluginConfiguration = gitLabPluginConfiguration;
@@ -65,6 +66,7 @@ public abstract class AbstractCommentBuilder {
         this.markDownUtils = markDownUtils;
         this.templateName = templateName;
         this.template = template;
+        this.dashboardUrl = dashboardUrl;
     }
 
     public String buildForMarkdown() {
@@ -118,6 +120,7 @@ public abstract class AbstractCommentBuilder {
         root.put("imageSeverity", new ImageSeverityTemplateMethodModelEx(markDownUtils));
         root.put("ruleLink", new RuleLinkTemplateMethodModelEx(gitLabPluginConfiguration));
         Arrays.stream(Common.RuleType.values()).forEach(type -> root.put(type.name(), type.name()));
+        root.put("dashboardUrl", dashboardUrl);
         return root;
     }
 

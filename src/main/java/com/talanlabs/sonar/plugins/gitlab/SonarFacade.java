@@ -78,6 +78,7 @@ public class SonarFacade {
     private final WsClient wsClient;
     private File projectBaseDir;
     private File workDir;
+    private Properties properties;
 
     private Cache<String, File> componentCache = CacheBuilder.newBuilder().build();
     private Cache<String, Rule> ruleCache = CacheBuilder.newBuilder().build();
@@ -94,6 +95,7 @@ public class SonarFacade {
     public void init(File projectBaseDir, File workDir) {
         this.projectBaseDir = projectBaseDir;
         this.workDir = workDir;
+        this.properties = readReportTaskProperties();
     }
 
     /**
@@ -102,9 +104,8 @@ public class SonarFacade {
      * @return current quality gate
      */
     public QualityGate loadQualityGate() {
-        Properties reportTaskProps = readReportTaskProperties();
-
-        String analysisId = getAnalysisId(reportTaskProps.getProperty("ceTaskId"));
+        Ce.Task task = getTask();
+        String analysisId = getAnalysisId(task);
 
         Qualitygates.ProjectStatusResponse.ProjectStatus projectStatus = checkQualityGate(analysisId);
         logQualityGate(projectStatus);
@@ -134,14 +135,14 @@ public class SonarFacade {
         return properties;
     }
 
-    private String getAnalysisId(String ceTaskId) {
+    private String getAnalysisId(Ce.Task task) {
         int queryMaxRetry = gitLabPluginConfiguration.queryMaxRetry();
         long queryWait = gitLabPluginConfiguration.queryWait();
 
         int retry = 0;
         String analysisId = null;
         do {
-            Ce.Task task = getTask(ceTaskId);
+
             Ce.TaskStatus taskStatus = task.getStatus();
 
             if (Ce.TaskStatus.SUCCESS.equals(taskStatus)) {
@@ -170,8 +171,8 @@ public class SonarFacade {
         return analysisId;
     }
 
-    private Ce.Task getTask(String ceTaskId) {
-        Ce.TaskResponse taskResponse = wsClient.ce().task(new TaskRequest().setId(ceTaskId));
+    private Ce.Task getTask() {
+        Ce.TaskResponse taskResponse = wsClient.ce().task(new TaskRequest().setId(getCeTaskId()));
         return taskResponse.getTask();
     }
 
@@ -232,9 +233,7 @@ public class SonarFacade {
     }
 
     public List<Issue> getNewIssues() {
-        Properties reportTaskProps = readReportTaskProperties();
-
-        String projectKey = reportTaskProps.getProperty("projectKey");
+        String projectKey = getProjectKey();
         String refName = gitLabPluginConfiguration.refName();
         int page = 1;
         Integer nbPage = null;
@@ -248,6 +247,18 @@ public class SonarFacade {
             page++;
         }
         return issues;
+    }
+
+    public String getDashboardUrl() {
+        return properties.getProperty("dashboardUrl");
+    }
+
+    private String getProjectKey() {
+        return properties.getProperty("projectKey");
+    }
+
+    private String getCeTaskId() {
+        return properties.getProperty("ceTaskId");
     }
 
     private Issues.SearchWsResponse searchIssues(String componentKey, String branch, int page) {
